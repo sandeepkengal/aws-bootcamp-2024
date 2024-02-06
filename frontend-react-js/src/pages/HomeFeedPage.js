@@ -1,14 +1,13 @@
 import './HomeFeedPage.css';
 import React from "react";
+import { Auth } from 'aws-amplify';
 
-import DesktopNavigation  from '../components/DesktopNavigation';
-import DesktopSidebar     from '../components/DesktopSidebar';
+import DesktopNavigation from '../components/DesktopNavigation';
+import DesktopSidebar from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
 
-// [TODO] Authenication
-import Cookies from 'js-cookie'
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -20,15 +19,15 @@ export default function HomeFeedPage() {
 
   const loadData = async () => {
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
       const res = await fetch(backend_url, {
         method: "GET"
       });
       let resJson = await res.json();
       if (res.status === 200) {
-        setActivities(resJson)
+        setActivities(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);
@@ -36,24 +35,30 @@ export default function HomeFeedPage() {
   };
 
   const checkAuth = async () => {
-    console.log('checkAuth')
-    // [TODO] Authenication
-    if (Cookies.get('user.logged_in')) {
+    try {
+      const user = await Auth.currentAuthenticatedUser({
+        bypassCache: false
+      });
+      
+      console.log('user', user);
+
       setUser({
-        display_name: Cookies.get('user.name'),
-        handle: Cookies.get('user.username')
-      })
+        display_name: user.attributes.name,
+        handle: user.attributes.preferred_username
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  React.useEffect(()=>{
-    //prevents double call
+  React.useEffect(() => {
+    // Prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
 
     loadData();
     checkAuth();
-  }, [])
+  }, []);
 
   return (
     <article>
