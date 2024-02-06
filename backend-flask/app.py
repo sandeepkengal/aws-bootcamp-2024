@@ -89,6 +89,8 @@ cors = CORS(
   methods="OPTIONS,GET,HEAD,POST"
 )
 
+
+# Cloud Watch. -----
 @app.after_request
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
