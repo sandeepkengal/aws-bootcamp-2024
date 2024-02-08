@@ -16,3 +16,5 @@ aws-xray-sdk
 
 # Cloud Watch Logs
 watchtower
+
+Flask-AWSCognito
