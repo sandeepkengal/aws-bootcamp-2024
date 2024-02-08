@@ -57,6 +57,7 @@ export default function SignupPage() {
     el_errors = <div className='errors'>{errors}</div>;
   }
 
+
   return (
     <article className='signup-article'>
       <div className='signup-info'>
